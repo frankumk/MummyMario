@@ -43,13 +43,13 @@ export default class GameScene extends Phaser.Scene {
   hitBaddie(player,monster){
     if(this.lives>0){
       this.lifeCount.setText('Lives: ' + this.lives)
-      this.scene.start('Game');
+      //this.scene.start('Game');
       this.lives = this.lives-1;
     }
   }
 
   win(player, palm) {
-    // console.log('win')
+    this.scene.start('GameOver',{ score: this.score, won: true })
   }
  
   create () {
@@ -64,7 +64,8 @@ export default class GameScene extends Phaser.Scene {
     this.dragons = this.physics.add.group({
       key: 'dragon',
       repeat: 6,
-      setXY: {x: 200, y: 30, stepX: 200, stepY: 40}
+      setXY: {x: 200, y: 30, stepX: 200, stepY: 40},
+      setScale: { x: 0.75, y: 0.75 }
     })
     let dragons = this.dragons.getChildren();
     Phaser.Actions.Call(dragons, function(dragon) {
@@ -80,7 +81,7 @@ export default class GameScene extends Phaser.Scene {
     })
     let balls = this.balls.getChildren();
     Phaser.Actions.Call(balls, function(ball) {
-      ball.speed = 3;
+      ball.speed = 1;
       ball.xOrig = ball.x;
     }, this);
 
@@ -143,7 +144,7 @@ export default class GameScene extends Phaser.Scene {
       let balls = this.balls.getChildren();
       for(let i = 0; i < balls.length; i++){
         balls[i].x += balls[i].speed;
-        if(balls[i].x >= balls[i].xOrig+50 && balls[i].speed>0){
+        if(balls[i].x >= balls[i].xOrig+70 && balls[i].speed>0){
           balls[i].speed *= -1;
         }else if(balls[i].x <= balls[i].xOrig && balls[i].speed<0){
           balls[i].speed *= -1;
@@ -152,7 +153,7 @@ export default class GameScene extends Phaser.Scene {
 
       this.physics.add.overlap(this.mummy, this.palm, this.win, null, this);
       this.physics.add.overlap(this.mummy, this.mushrooms, this.collectGold, null, this);
-      //this.physics.add.overlap(this.mummy, this.dragons, this.hitBaddie, null, this);
+      this.physics.add.overlap(this.mummy, this.dragons, this.hitBaddie, null, this);
     
 
     }

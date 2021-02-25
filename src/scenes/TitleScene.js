@@ -15,7 +15,7 @@ export default class TitleScene extends Phaser.Scene {
 
   create () {
 
-    this.add.text(100,100,"MUMMY MARIO!",20)
+    this.add.text(100,100,"MUMMY MARIO!",{ fontSize: '32px'})
     const button = this.add.sprite(300,300,"button")
     this.add.text(400,300,"Press to Play")
     button.setInteractive({ useHandCursor: true })
