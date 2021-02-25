@@ -7,9 +7,9 @@ export default class GameScene extends Phaser.Scene {
     this.collectGold = this.collectGold.bind(this)
     this.win = this.win.bind(this)
   }
-  init(){
-    this.lives = 3
-    this.score = 0
+  init(data={lives: 3, score: 0}){
+    this.lives = data.lives
+    this.score = data.score || 0
     this.timer = 2
     this.velocity_x = 200
     this.velocity_y = 300
@@ -42,9 +42,10 @@ export default class GameScene extends Phaser.Scene {
 
   hitBaddie(player,monster){
     if(this.lives>0){
-      this.lifeCount.setText('Lives: ' + this.lives)
-      //this.scene.start('Game');
       this.lives = this.lives-1;
+      this.lifeCount.setText('Lives: ' + this.lives)
+      console.log(this.lives)
+      this.scene.start('Game', {lives: this.lives });
     }
   }
 
