@@ -51,7 +51,7 @@ class Game extends Phaser.Game {
     this.scene.add('Title', TitleScene)
     this.scene.add('Game', GameScene)
     this.scene.add('GameOver', GameOver)
-    this.scene.start('Game')
+    this.scene.start('Title')
   }
 }
  
