@@ -32,7 +32,6 @@ export default class GameScene extends Phaser.Scene {
 
   collectGold(player,gold){
     this.score = this.score + 10;
-    console.log(this.score)
     gold.destroy ();
     this.scoreBoard.setText(`Gold: ` + this.score)
   }
@@ -81,11 +80,24 @@ export default class GameScene extends Phaser.Scene {
     this.palm = this.physics.add.sprite(1480, 360, 'flag')
 
     //this.gold = this.add.sprite(420, 370, 'gold')
+    //this.gold = this.add.sprite(420, 370, 'gold')
     this.gold = this.physics.add.group({
       key: 'gold',
-      repeat: 2,
-      setXY: {x: 250, y:380, stepX: 15, stepY:-10}
+      repeat: 32,
+      setXY: {x: 250, y:300, stepX: 35}
     })
+
+    this.gold.children.each(function(child){
+			for (let i = 0; i < 32; i++){
+				//var xPos = Phaser.Math.Between(100, 1300);
+				let yPos = Phaser.Math.Between(200, 320);
+
+				//child.x = xPos;
+				child.y = yPos;
+				child.setOrigin(0,0);
+
+			}
+		})
     
     // this.physics.add.group({
     //   key: 'gold',
@@ -93,7 +105,6 @@ export default class GameScene extends Phaser.Scene {
     //   setXY: {x: 313, y:360, stepX: 15, stepY:10}
     // })
 
-    console.log(this.gold)
 
     this.physics.world.setBounds(0, 0, 1500, 430);
     this.mummy.setCollideWorldBounds(true)
