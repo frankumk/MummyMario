@@ -15,7 +15,7 @@ export default class GameOver extends Phaser.Scene {
   }
 
   clickButton(){
-    this.scene.switch('Game');
+    this.scene.start('Game', {lives: 3, score: 0});
   }
 
   create(){

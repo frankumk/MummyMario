@@ -3,9 +3,9 @@ import Phaser from 'phaser';
 export default class GameScene extends Phaser.Scene {
   constructor () {
     super('Game')
-    this.hitBaddie = this.hitBaddie.bind(this)
-    this.collectGold = this.collectGold.bind(this)
-    this.win = this.win.bind(this)
+    // this.hitBaddie = this.hitBaddie.bind(this)
+    // this.collectGold = this.collectGold.bind(this)
+    // this.win = this.win.bind(this)
   }
   init(data={lives: 3, score: 0}){
     this.lives = data.lives
@@ -40,28 +40,31 @@ export default class GameScene extends Phaser.Scene {
     this.scoreBoard.setText(`Gold: ` + this.score)
   }
 
-  hitBaddie(player,monster){
-    if(this.lives>0){
-      this.lives = this.lives-1;
-      this.lifeCount.setText('Lives: ' + this.lives)
-      console.log(this.lives)
-      this.scene.start('Game', {lives: this.lives });
-    }
-  }
+  // hitBaddie(player,monster){
+  //   if(this.lives>0){
+  //     this.lives = this.lives-1;
+  //     this.lifeCount.setText('Lives: ' + this.lives)
+  //     console.log(this.lives)
+  //     this.scene.start('Game', {lives: this.lives });
+  //   }
+  // }
 
   win(player, palm) {
     this.scene.start('GameOver',{ score: this.score, won: true })
   }
  
   create () {
-    this.floor = this.add.image(400, 430, 'floor') + this.add.image(800, 430, 'floor') + this.add.image(1200, 430, 'floor') + this.add.image(1600, 430, 'floor')
-    this.scoreBoard = this.add.text(16,16,`Gold: ` + this.score, { fontSize: '32px'})
-    this.lifeCount = this.add.text(16,50,`Lives: ` + this.lives, { fontSize: '32px'})
+    const lifeCount = this.lifeCount = this.add.text(16,50,`Lives: ` + this.lives, { fontSize: '32px'})
+    const scoreBoard = this.scoreBoard = this.add.text(16,16,`Gold: ` + this.score, { fontSize: '32px'})
+    //const lifeCount = this.lifeCount = this.add.text(16,50,`Lives: ` + this.lives, { fontSize: '32px'})
+    lifeCount.fixedToCamera = true;
+    scoreBoard.fixedToCamera = true;
 
-    this.mummy = this.physics.add.sprite(100, 400, 'mummy')
-    //this.mummy.setBounce(0.2);
-
-    
+    //if(this.lives === 3){
+      this.floor = this.add.image(400, 430, 'floor') + this.add.image(800, 430, 'floor') + this.add.image(1200, 430, 'floor') + this.add.image(1600, 430, 'floor')
+      this.mummy = this.physics.add.sprite(100, 400, 'mummy')
+      //this.mummy.setBounce(0.2);
+      
     this.dragons = this.physics.add.group({
       key: 'dragon',
       repeat: 6,
@@ -100,8 +103,6 @@ export default class GameScene extends Phaser.Scene {
       repeat: 2,
       setXY: {x: 313, y:360, stepX: 15, stepY:10}
     })
-
-
 
     this.physics.world.setBounds(0, 0, 1500, 430);
     this.mummy.setCollideWorldBounds(true)
@@ -152,18 +153,29 @@ export default class GameScene extends Phaser.Scene {
         }
       }
 
+      //mummy hits dragon, decreases mummy life
+      for(let i = 0 ; i < dragons.length; i++){
+        if (Phaser.Geom.Intersects.RectangleToRectangle(this.mummy.getBounds(), dragons[i].getBounds())) {
+          this.lives--;
+          this.lifeCount.setText("Lives: " + this.lives);
+          this.end();
+        }
+    }
+
       this.physics.add.overlap(this.mummy, this.palm, this.win, null, this);
-      this.physics.add.overlap(this.mummy, this.mushrooms, this.collectGold, null, this);
-      this.physics.add.overlap(this.mummy, this.dragons, this.hitBaddie, null, this);
+      // this.physics.add.overlap(this.mummy, this.mushrooms, this.collectGold, null, this);
+      // this.physics.add.overlap(this.mummy, this.dragons, this.hitBaddie, null, this);
     
 
     }
 
   end() {
     if(this.lives <= 0) {
-      this.scene.restart();
+      this.scene.stop('Game');
+      this.scene.start('GameOver',{ score: this.score, won: false })
     } else {
-      this.create();
+      this.scene.stop('Game');
+      this.scene.start('Game', {lives: this.lives, score: this.score});
     }
   }
 };
