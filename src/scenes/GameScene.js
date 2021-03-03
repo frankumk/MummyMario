@@ -28,6 +28,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.spritesheet('dragon', '../assets/stormlord-dragon.png', { frameWidth: 96, frameHeight: 64})
     this.load.image('gold','../assets/mushroom.png')
     this.load.image('wizball','../assets/wizball.png')
+    this.load.image('platform','../assets/platform.png')
   }
 
   collectGold(player,gold){
@@ -48,6 +49,15 @@ export default class GameScene extends Phaser.Scene {
     scoreBoard.fixedToCamera = true;
 
       this.floor = this.add.image(400, 430, 'floor') + this.add.image(800, 430, 'floor') + this.add.image(1200, 430, 'floor') + this.add.image(1600, 430, 'floor')
+      
+      this.platforms = this.physics.add.group({
+        key: 'platform',
+        repeat: 1,
+        setXY: {x: 700, y: 300, stepX: 400},
+        setScale: { x: 0.2, y: 0.2 },
+        immovable: true
+      })
+      
       this.mummy = this.physics.add.sprite(100, 400, 'mummy')
       //this.mummy.setBounce(0.2);
       
@@ -111,6 +121,7 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.floor, this.mummy)
     this.mummy.body.setGravityY(1000)
     this.physics.add.collider(this.mummy, this.floor)
+    this.physics.add.collider(this.mummy, this.platforms)
 
   }
 
@@ -191,7 +202,7 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.mummy, gold[i], this.collectGold, null, this);
       }
 
-
+      this.physics.add.collider(this.mummy, this.platforms)
       this.physics.add.overlap(this.mummy, this.palm, this.win, null, this);
 
       // this.physics.add.overlap(this.mummy, this.dragons, this.hitBaddie, null, this);
